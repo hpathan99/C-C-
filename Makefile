@@ -1,35 +1,41 @@
 #------------------------------------------------------------------------------
-# Makefile for CSE 101 Programming Assignment 1
+#  Makefile for CSE 101 Programming Assignment 2
 #
-# make                   makes Lex
-# make ListClient        makes ListClient
-# make clean             removes all binaries
-# make checkClient       checks ListClient for memory errors
-# make checkLex          checks Lex for memory errors
+#  make                     makes FindPath
+#  make GraphTest         	makes GraphTest
+#  make clean               removes binaries
+#  make checkFind           tests FindPath for memory leaks on in3
+#  make checkTest         	tests GraphTest for memory leaks
 #------------------------------------------------------------------------------
 
-Lex : Lex.o List.o
-	gcc -std=c11 -Wall -o Lex Lex.o List.o
+BASE_SOURCES   = Graph.c List.c
+BASE_OBJECTS   = Graph.o List.o
+HEADERS        = Graph.h List.h
+COMPILE        = gcc -c -std=c11 -Wall
+LINK           = gcc -o
+REMOVE         = rm -f
+MEMCHECK       = valgrind --leak-check=full
 
-Lex.o : Lex.c List.h
-	gcc -std=c11 -Wall -c Lex.c
+FindPath : FindPath.o $(BASE_OBJECTS)
+	$(LINK) FindPath FindPath.o $(BASE_OBJECTS)
 
-ListClient: ListClient.o List.o
-	gcc -std=c11 -Wall -o ListClient ListClient.o List.o
+GraphTest : GraphTest.o $(BASE_OBJECTS)
+	$(LINK) GraphTest GraphTest.o $(BASE_OBJECTS)
 
-ListClient.o : ListClient.c List.h
-	gcc -std=c11 -Wall -c ListClient.c
+FindPath.o : FindPath.c $(HEADERS)
+	$(COMPILE) FindPath.c
 
-List.o : List.c List.h
-	gcc -std=c11 -Wall -c List.c
+GraphTest.o : GraphTest.c $(HEADERS)
+	$(COMPILE) GraphTest.c
+
+$(BASE_OBJECTS) : $(BASE_SOURCES) $(HEADERS)
+	$(COMPILE) $(BASE_SOURCES)
 
 clean :
-	rm -f Lex ListClient Lex.o ListClient.o List.o
+	$(REMOVE) FindPath GraphTest FindPath.o GraphTest.o $(BASE_OBJECTS)
 
-checkClient : 
-	valgrind --leak-check=full ListClient
+checkFind : FindPath
+	$(MEMCHECK) FindPath in3 junk3
 
-checkLex :
-	valgrind --leak-check=full Lex in3 blah3
-
-
+checkClient : GraphTest
+	$(MEMCHECK) GraphTest

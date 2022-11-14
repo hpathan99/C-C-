@@ -1,6 +1,6 @@
 /*********************************************************************************
 * Hassan Pathan, hpathan
-* 2021 Spring CSE 101 pa1
+* 2021 Spring CSE 101 pa2
 * List.c
 * List functions built for List ADT
 *********************************************************************************/
@@ -579,12 +579,16 @@ void printList(FILE *out, List L) // Prints to the file pointed to by out, a
         printf("List Error: calling printList() on Null list reference\n");
         exit(EXIT_FAILURE);
     }
-    Node hNode = NULL;
-    for (hNode = L->front; hNode != NULL; hNode = hNode->next)
+    Node hNode = L->front;
+    while (hNode != NULL)
     {
         fprintf(out, "%d", hNode->x);
+        if (hNode != L->back)
+        {
+            fprintf(out, " ");
+        }
+        hNode = hNode->next;
     }
-    fprintf(out, "\n");
 }
 
 List copyList(List L) // Returns a new List representing the same integer
